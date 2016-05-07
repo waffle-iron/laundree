@@ -78,7 +78,7 @@ function startPasswordReset (req, res) {
         utils.mail.sendEmail({user: user.model, token: token}, 'password-reset', user.model.emails[0])
           .then(() => {
             res.statusCode = 204
-            res.json(null)
+            res.end()
           }).catch(() => returnError(res, 500, 'Failed to send email.'))
       }).catch(() => returnError(res, 500, 'Creation failed.'))
     })
@@ -99,10 +99,9 @@ function passwordReset (req, res) {
         user.resetPassword(password)
           .then(() => {
             res.statusCode = 204
-            res.json(null)
-          })
-          .catch(() => returnError(res, 500, 'Reset failed.'))
-      })
+            res.end()
+          }, () => returnError(res, 500, 'Reset failed.'))
+      }, () => returnError(res, 500, 'Verification failed.'))
     })
     .catch(() => returnError(res, 404, 'User not found.'))
 }
